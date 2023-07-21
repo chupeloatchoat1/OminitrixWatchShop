@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../CSS/style.css">
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript" src="../../JS/login.js"></script>
+    <script type="text/javascript" src="../../JS/RegularExpressions.js"></script>
+    <script type="text/javascript" src="../../JS/cart.js"></script>
+    <script type="text/javascript" src="../../JS/watch.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title id="title">Add Product</title>
+    <script>
+        // window.onscroll = function () { scrollFunction() };
+        window.onload = function () { document.getElementById('leafFinal').textContent = document.getElementById('title').textContent 
+                                        isCustomer()
+                                        quantityInCart()}
+
+    </script>
+</head>
+
+<body>
+    <div style="padding: 1%; z-index: 2;">
+        <header>
+            <div class="column">
+                <div class="row">
+                    <div class="col-md-9 col-lg-9"></div>
+                    <div class="col-md-3 col-lg-3">
+                        <div id="loginContainer">
+                            <span>
+                                <a href="../ShoppingCart.html" style="color: black;position: relative;"><i
+                                    class="material-icons">shopping_cart</i></a>
+                                    <p id="quantityCart"></p>
+                            </span>
+                            <!-- Guest -->
+                            <div id="guest">
+                                <a href="../Registration.html">Registration</a> &#124; 
+                                <a href="../Login.html">Login</a>
+                            </div>
+
+                            <!-- Customer -->
+                            <div class="dropdown" style="display: none;" id="customer">
+                                <a href="../Login.html" id="userName" style="display: inline-flex;justify-content: center;"></a>
+                                <div class="dropdown-content">
+                                    <a href="../MyOrder.html">My Order</a>
+                                    <a href="TableProduct.html" id="roleAdmin">Admin</a>
+                                    <a href="#" onclick="logOut()">Log Out</a>
+                                </div>
+                                <script>
+                                    if('userid' in sessionStorage){
+                                        userID = JSON.parse(sessionStorage.getItem('userid'))
+                                        document.getElementById('userName').href = '../ProfileUser.html?userId='+userID+''
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="navbar">
+                    <div class="col-md-3 col-lg-3" style="padding-left: 10%;">
+                        <a href="../Home.html"><img src="../../Img/logo.png" style="width:80%" /></a>
+                    </div>
+                    <div class="col-md-6 col-lg-6">
+                        <div class="flex-container" id="categories">
+                            <script>
+                                axios.get('http://localhost:9000/ominitrix/type')
+                                .then(function(response){
+                                    document.getElementById('categories').innerHTML = response.data.map(function(type){
+                                        return(
+                                            '<a style="font-size: 25px" href="../Categories.html?watchType='+type.typeID+'">'+type.typeName+'</a>'
+                                        )
+                                    }).join('')
+                                })
+                            </script>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-3">
+                        <div class="search">
+                            <input type="text" id="searchName" class="form-control">
+                            <button style="border: none;"><i class="material-icons" 
+                                onclick="
+                                            const search = document.getElementById('searchName').value
+                                            if(search){
+                                                location.href='../Search.html?search='+search+''
+                                            }">search</i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="pathLink">
+                        <a href="../Home.html">Home</a> &iota; <a id="leafFinal"></a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section>
+            <div class="row">
+                <div class="col-md-2 col-lg-2">
+                    <div class="menuAdmin">
+                        <div class="tab" style="background-color:whitesmoke;padding-top: 2%;">
+                            <button class="dropdown-btn"><i class="material-icons">loyalty</i>
+                                Products<i class="material-icons">arrow_drop_down</i></button>
+                            <div class="dropdown-container">
+                                <button class="tablinks" onclick="location.href='TableProduct.html'">Products</button><br>
+                                <button class="tablinks" onclick="location.href='AddProduct.html'">Add products</button><br>
+                                <button class="tablinks" onclick="location.href='TableBrand.html'">Brands</button>
+                            </div><br>
+
+                            <button class="tablinks" onclick="location.href='TableOrder.html'"><i class="material-icons" >payment</i>Order</button><br>
+
+                            <button class="tablinks" onclick="location.href='TableCustomer.html'"><i class="material-icons" >group</i>Customers</button><br>
+
+                            <button class="tablinks" onclick="location.href='Statistics.html'"><i class="material-icons" >equalizer</i>Statistics</button><br>
+                        </div>
+                    </div>
+                    <script>
+                        var dropdown = document.getElementsByClassName("dropdown-btn");
+                        var i;
+                        for (i = 0; i < dropdown.length; i++) {
+                            dropdown[i].addEventListener("click", function () {
+                                this.classList.toggle("active");
+                                var dropdownContent = this.nextElementSibling;
+                                if (dropdownContent.style.display === "block") {
+                                    dropdownContent.style.display = "none";
+                                } else {
+                                    dropdownContent.style.display = "block";
+                                }
+                            });
+                        }
+                    </script>
+                </div>
+                <div class="col-md-10 col-lg-10" id="content">
+                    <!-- Add Products -->
+                    <div id="AddProducts">
+                        <h3>Add Products</h3>
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12">
+                                <form id="group-input" enctype="multipart/form-data" onsubmit="return false">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="newWName">Watch name:</label>
+                                            <input class="form-control" type="text" id="newWName"
+                                                    onblur="checkEmpty('newWName','errorNewName')">
+                                            <p id="errorNewName"></p>
+
+                                            <div style="display: inline-flex;align-items: center;">
+                                                <label>Brand: </label>
+                                                <select id="sortBy" class="brand">
+                                                    <script>
+                                                        axios.get('http://localhost:9000/ominitrix/brand')
+                                                            .then(function(res){
+                                                                document.querySelector('.brand').innerHTML =     
+                                                                    res.data.map(function(c){
+                                                                        return(
+                                                                            '<option value="'+c.brandID+'">'+c.brandName+'</option>'
+                                                                        )
+                                                                    })
+                                                            })
+                                                    </script>
+                                                </select>
+
+                                                <label>Type: </label>
+                                                <select id="sortBy" class="type">
+                                                    <script>
+                                                        axios.get('http://localhost:9000/ominitrix/type')
+                                                            .then(function(res){
+                                                                document.querySelector('.type').innerHTML =     
+                                                                    res.data.map(function(c){
+                                                                        return(
+                                                                            '<option value="'+c.typeID+'">'+c.typeName+'</option>'
+                                                                        )
+                                                                    })
+                                                            })
+                                                    </script>
+                                                </select>
+                                            </div>
+
+                                            <div style="display: inline-flex;align-items: center;">
+                                                <input type="checkbox" id="newWResistance" style="margin-right:10px">
+                                                <label for="newWResistance" style="margin-right: 80px;">Water Resistance</label>
+
+                                                <input type="checkbox" id="newWGender" style="margin-right:10px">
+                                                <label for="newWGender">Watch Gender</label>
+                                            </div>
+
+                                            <div style="display: inline-flex;">
+                                                <div style="margin-right: 40px;">
+                                                    <label for="newWColor">Color: </label>
+                                                    <select id="sortBy" class="color">
+                                                        <script>
+                                                            axios.get('http://localhost:9000/ominitrix/color')
+                                                                .then(function(res){
+                                                                    document.querySelector('.color').innerHTML =    
+                                                                        res.data.map(function(c){
+                                                                            return(
+                                                                                '<option value="'+c.colorID+'">'+c.colorName+'</option>'
+                                                                            )
+                                                                        })
+                                                                })
+                                                        </script>
+                                                    </select>
+                                                    <!-- <input class="form-control" type="text" id="newWColor"
+                                                        onblur="checkEmpty('newWColor','erroeNewColor')">
+                                                    <p id="erroeNewColor"></p> -->
+                                                </div>
+
+                                                <div>
+                                                    <label for="newWPrice">Price: </label>
+                                                    <input class="form-control" type="text" id="newWPrice" placeholder="$"
+                                                            onblur="checkEmpty('newWPrice','errorNewPrice')">
+                                                    <p id="errorNewPrice"></p>
+                                                </div>
+                                            </div>
+
+                                            <div style="display: inline-flex;align-items: center;">
+                                                <div style="margin-right: 40px;">
+                                                    <label for="newWThickness">Thickness: </label>
+                                                    <input class="form-control" type="text" id="newWThickness"
+                                                    style="margin-right: 10px;" placeholder="mm">
+                                                </div>
+
+                                                <div>
+                                                    <label for="newWQuantity">Quantity: </label>
+                                                    <input class="form-control" type="number" id="newWQuantity" min="1">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="newDescription">Description:</label><br>
+                                            <textarea id="newDescription" rows="4" cols="73"></textarea><br>
+            
+                                            <label for="Images">Images:</label><br>
+                                            <input type="file" multiple accept="image/*" id="fileImage" onchange="previewImages(event)">
+                                            <div class="row" id="Images"></div>
+                                        </div>
+                                    </div>
+                                    
+                                </form>
+                                <div style="margin-top: 5%;">
+                                    <button id="btnSave" onclick="addWatch()"><i class="material-icons">save</i>Save</button>
+                                    <button id="btnCancel"><i class="material-icons">cancel</i>Cancel</button>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer>
+            <div class="row">
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Categories</h4>
+                    <a href="../Categories.html">Women's</a><br>
+                    <a href="../Categories.html">Men's</a><br>
+                    <a href="../Categories.html">Collection</a><br>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Information</h4>
+                    <a href="#">About us</a><br>
+                    <a href="#">Customer Service</a><br>
+                    <a href="#">Privacy Policy</a><br>
+                    <a href="#">Contact Us</a><br>
+                    <a href="#">Blog</a><br>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Contact Us</h4>
+                    <span><i class="material-icons" style="font-size: 17px;">location_on</i> Nguyễn Văn Bảo</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">phone</i> 01234567891</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">access_alarm</i> 7 days a week from 9:00 am
+                        to 7:00 pm</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">mail</i> info@demolink.org</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</body>
+
+</html>

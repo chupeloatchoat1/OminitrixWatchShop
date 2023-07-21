@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../CSS/style.css">
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript" src="../JS/RegularExpressions.js"></script>
+    <script type="text/javascript" src="../JS/login.js"></script>
+    <script type="text/javascript" src="../JS/cart.js"></script>
+    
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Home</title>
+    <script>
+        // window.onscroll = function () { scrollFunction() };
+        window.onload = function(){isCustomer();
+                                    quantityInCart()}
+    </script>
+</head>
+
+<body>
+    <div style="padding: 1%; z-index: 2;">
+        <header>
+            <div class="column">
+                <div class="row">
+                    <div class="col-md-9 col-lg-9"></div>
+                    <div class="col-md-3 col-lg-3">
+                        <div id="loginContainer">
+                            <span>
+                                <a href="ShoppingCart.html" style="color: black;position: relative;"><i
+                                    class="material-icons">shopping_cart</i></a>
+                                    <p id="quantityCart"></p>
+                            </span>
+
+                            <!-- Guest -->
+                            <div id="guest" style="display: inline;">
+                                <a href="Registration.html">Registration</a> &#124; 
+                                <a href="Login.html">Login</a>
+                            </div>
+
+                            <!-- Customer -->
+                            <div class="dropdown" style="display: none;" id="customer">
+                                <a id="userName" style="display: inline-flex;justify-content: center;"></a>
+                                <div class="dropdown-content">
+                                    <a href="../HTML/MyOrder.html">My Order</a>
+                                    <a href="Admin/TableProduct.html" id="roleAdmin">Admin</a>
+                                    <a href="#" onclick="logOut()">Log Out</a>
+                                </div>
+                                <script>
+                                    if('userid' in sessionStorage){
+                                        userID = JSON.parse(sessionStorage.getItem('userid'))
+                                        document.getElementById('userName').href = 'ProfileUser.html?userId='+userID+''
+                                    }
+                                </script>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="navbar">
+                    <div class="col-md-3 col-lg-3" style="padding-left: 10%;">
+                        <a href="Home.html"><img src="../Img/logo.png" style="width:80%" /></a>
+                    </div>
+                    <div class="col-md-6 col-lg-6">
+                        <div class="flex-container" id="categories">
+                            <script>
+                                axios.get('http://localhost:9000/ominitrix/type')
+                                .then(function(response){
+                                    document.getElementById('categories').innerHTML = response.data.map(function(type){
+                                        return(
+                                            '<a style="font-size: 25px" href="Categories.html?watchType='+type.typeID+'">'+type.typeName+'</a>'
+                                        )
+                                    }).join('')
+                                })
+                            </script>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-3">
+                        <div class="search">
+                            <input type="text" id="searchName" class="form-control">
+                            <button style="border: none;"><i class="material-icons" 
+                                onclick="
+                                            const search = document.getElementById('searchName').value
+                                            if(search){
+                                                location.href='../HTML/Search.html?search='+search+''
+                                            }">search</i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <img src="https://www.ernestjones.co.uk/content-root/shops/luxury-watches-boutique.cdo/images/201910181000/EJ19W81_LuxuryWatchBanner_1200x392.jpg"
+                            style="margin-top: 2%; width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section>
+            <div class="column">
+                <div class="row">
+                    <h4 style="font-weight: bold;" id="container">Sport</h4>
+                </div>
+                <!-- Danh sách đồng hồ nữ -->
+                <div class="row" id="watchSport">
+                    <script>
+                        axios.get('http://localhost:9000/ominitrix/watch')
+                            .then(function(watchs){
+                            watchSport = watchs.data.filter(function(watch){
+                                return watch.typeID==='T01' 
+                            }).slice(0,4)
+                            console.log(watchSport);
+                            document.getElementById('watchSport').innerHTML = watchSport.map(function(watch){
+                                if(watch.limitQuantity>0){
+                                    imageWatch = watch.images[0]
+                                    return(
+                                        '<div class="col-md-3 col-lg-3">'+
+                                            '<div class="card">'+
+                                                '<div class="card-header" style="position: relative;;">'+
+                                                ' <a href="ProductDetail.html?watchId='+watch.watchID+'">'+
+                                                        '<img src="http://localhost:9000/'+imageWatch+'"'+
+                                                            'id="imageCard">'+
+                                                        '<div class="middle">'+
+                                                            '<i class="material-icons"'+
+                                                                'style="color: gray;margin-top: 50%;">remove_red_eye</i>'+
+                                                        '</div>'+
+                                                ' </a>'+
+                                                '</div>'+
+                                                '<div class="card-body" style="width: 100%;margin-bottom: -30px;">'+
+                                                    '<a href="ProductDetail.html?watchId='+watch.watchID+'  " class="txtLinkName">'+
+                                                        '<p id="nameWatch">'+watch.watchName+'</p>'+
+                                                    '</a>'+
+                                                    '<p id="priceWatch">'+watch.price.toLocaleString('en-US', {style : 'currency', currency : 'VND'})+'</p>'+
+                                                '</div>'+
+                                                '<div style="margin-bottom: 20px;">'+
+                                                    '<button id="btnAdd2Cart" onclick="add2Cart(\''+watch.watchID+'\',\''+watch.price+'\')"><i class="material-icons"'+
+                                                            'style="color: white;background-color: black;margin-right: 10px;"'+
+                                                            '>shopping_cart</i>Add '+
+                                                        'to Cart</button>'+
+                                                '</div>'+
+                                        ' </div>'+
+                                    ' </div>'
+                                    )
+                                }else if(watch.limitQuantity<=0){
+                                    imageWatch = watch.images[0]
+                                    return(
+                                        '<div class="col-md-3 col-lg-3">'+
+                                            '<div class="card">'+
+                                                '<div class="card-header" style="position: relative;;">'+
+                                                ' <a href="ProductDetail.html?watchId='+watch.watchID+'">'+
+                                                        '<img src="http://localhost:9000/'+imageWatch+'"'+
+                                                            'id="imageCard">'+
+                                                        '<div class="middle">'+
+                                                            '<i class="material-icons"'+
+                                                                'style="color: gray;margin-top: 50%;">remove_red_eye</i>'+
+                                                        '</div>'+
+                                                ' </a>'+
+                                                '</div>'+
+                                                '<div class="card-body" style="width: 100%;margin-bottom: -30px;">'+
+                                                    '<a href="ProductDetail.html?watchId='+watch.watchID+'  " class="txtLinkName">'+
+                                                        '<p id="nameWatch">'+watch.watchName+'</p>'+
+                                                    '</a>'+
+                                                    '<p id="priceWatch">'+watch.price.toLocaleString('en-US', {style : 'currency', currency : 'VND'})+'</p>'+
+                                                '</div>'+
+                                                '<div style="margin-bottom: 20px;">'+
+                                                    '<button id="btnAdd2Cart" onclick="add2Cart(\''+watch.watchID+'\',\''+watch.price+'\')" disabled style="background-color:gray"><i class="material-icons"'+
+                                                            'style="color: white;background-color: gray;margin-right: 10px;"'+
+                                                            '>shopping_cart</i>Add '+
+                                                        'to Cart</button>'+
+                                                '</div>'+
+                                        ' </div>'+
+                                    ' </div>'
+                                    )
+                                }
+                                
+                                }).join('');
+                        })
+                        
+                    </script>
+                    </div>
+                </div>
+                </script>
+                <!-- Danh sách Brand -->
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <div id="lstBrand">
+                            <img src="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/watch-logo-explainer-breguet-1625095803.jpg?resize=480:*"
+                                id="imageBrand">
+                            <img src="https://images-platform.99static.com//FoLInmjzHdN0tTq7EaOlsJ6LjYY=/0x900:900x1800/fit-in/500x500/99designs-contests-attachments/88/88818/attachment_88818010"
+                                id="imageBrand">
+                            <img src="https://brandongaille.com/wp-content/uploads/2013/07/Breitling-Company-Logo.jpg"
+                                id="imageBrand">
+                            <img src="https://www.thelogocreative.co.uk/wp-content/uploads/rolex-min.jpg"
+                                id="imageBrand">
+                            <img src="https://www.thelogocreative.co.uk/wp-content/uploads/omega-min.jpg"
+                                id="imageBrand">
+                            <img src="https://www.thelogocreative.co.uk/wp-content/uploads/rado-min.jpg"
+                                id="imageBrand">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách đồng hồ nam -->
+                <div class="row">
+                    <h4 style="font-weight: bold;" id="container" >Fashion</h4>
+                </div>
+                <div class="row" id="watchFashion">
+                    <script>
+                        axios.get('http://localhost:9000/ominitrix/watch')
+                            .then((function(watchs){
+                                watchFashion = watchs.data.filter(function(watch){
+                                return watch.typeID==='T02' 
+                            }).slice(0,4)
+                            document.getElementById('watchFashion').innerHTML = watchFashion.map(function(watch){
+                                if(watch.limitQuantity>0){
+                                    imageWatch = watch.images[0]
+                                    return(
+                                        '<div class="col-md-3 col-lg-3">'+
+                                            '<div class="card">'+
+                                                '<div class="card-header" style="position: relative;;">'+
+                                                ' <a href="ProductDetail.html?watchId='+watch.watchID+'">'+
+                                                        '<img src="http://localhost:9000/'+imageWatch+'"'+
+                                                            'id="imageCard">'+
+                                                        '<div class="middle">'+
+                                                            '<i class="material-icons"'+
+                                                                'style="color: gray;margin-top: 50%;">remove_red_eye</i>'+
+                                                        '</div>'+
+                                                ' </a>'+
+                                                '</div>'+
+                                                '<div class="card-body" style="width: 100%;margin-bottom: -30px;">'+
+                                                    '<a href="ProductDetail.html?watchId='+watch.watchID+'  " class="txtLinkName">'+
+                                                        '<p id="nameWatch">'+watch.watchName+'</p>'+
+                                                    '</a>'+
+                                                    '<p id="priceWatch">'+watch.price.toLocaleString('en-US', {style : 'currency', currency : 'VND'})+'</p>'+
+                                                '</div>'+
+                                                '<div style="margin-bottom: 20px;">'+
+                                                    '<button id="btnAdd2Cart" onclick="add2Cart(\''+watch.watchID+'\',\''+watch.price+'\')"><i class="material-icons"'+
+                                                            'style="color: white;background-color: black;margin-right: 10px;"'+
+                                                            '>shopping_cart</i>Add '+
+                                                        'to Cart</button>'+
+                                                '</div>'+
+                                        ' </div>'+
+                                    ' </div>'
+                                    )
+                                }else if(watch.limitQuantity<=0 || watch.status==false){
+                                    imageWatch = watch.images[0]
+                                    return(
+                                        '<div class="col-md-3 col-lg-3">'+
+                                            '<div class="card">'+
+                                                '<div class="card-header" style="position: relative;;">'+
+                                                ' <a href="ProductDetail.html?watchId='+watch.watchID+'">'+
+                                                        '<img src="http://localhost:9000/'+imageWatch+'"'+
+                                                            'id="imageCard">'+
+                                                        '<div class="middle">'+
+                                                            '<i class="material-icons"'+
+                                                                'style="color: gray;margin-top: 50%;">remove_red_eye</i>'+
+                                                        '</div>'+
+                                                ' </a>'+
+                                                '</div>'+
+                                                '<div class="card-body" style="width: 100%;margin-bottom: -30px;">'+
+                                                    '<a href="ProductDetail.html?watchId='+watch.watchID+'  " class="txtLinkName">'+
+                                                        '<p id="nameWatch">'+watch.watchName+'</p>'+
+                                                    '</a>'+
+                                                    '<p id="priceWatch">'+watch.price.toLocaleString('en-US', {style : 'currency', currency : 'VND'})+'</p>'+
+                                                '</div>'+
+                                                '<div style="margin-bottom: 20px;">'+
+                                                    '<button id="btnAdd2Cart" onclick="add2Cart(\''+watch.watchID+'\',\''+watch.price+'\')" disabled style="background-color:gray"><i class="material-icons"'+
+                                                            'style="color: white;background-color: gray;margin-right: 10px;"'+
+                                                            '>shopping_cart</i>Add '+
+                                                        'to Cart</button>'+
+                                                '</div>'+
+                                        ' </div>'+
+                                    ' </div>'
+                                    )
+                                }
+                                }).join('');
+                        }))
+                        
+                    </script>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-lg-12" id="subscribe">
+                        <div class="row" style="background: none;padding: 8%;display: flex;align-items: center;">
+                            <div class="col-md-1 col-lg-1" style="background: none;">
+                                <i class="material-icons" style="color: white;
+                                                            background: none;
+                                                            padding-top: 6%;
+                                                            padding-left: 10%;
+                                                            font-size: 80px;">mail</i>
+                            </div>
+                            <div class="col-md-6 col-lg-6" style="background: none;">
+                                <p style="background: none;
+                                        color: white;">Subscribe to mailing list to receive updates on new arrivals,
+                                    special offers and other discount information.</p>
+                            </div>
+                            <div class="col-md-5 col-lg-5" style="background: none;">
+                                <input type="text" style="width: 80%;
+                                                        height: 45px;
+                                                        opacity: 0.8;"
+                                    placeholder="Enter your Email address"></input><br>
+                                <button id="btnSubscribe">SUBSCRIBE</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer>
+            <div class="row">
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Categories</h4>
+                    <a href="Categories.html">Women's</a><br>
+                    <a href="Categories.html">Men's</a><br>
+                    <a href="Categories.html">Collection</a><br>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Information</h4>
+                    <a href="#">About us</a><br>
+                    <a href="#">Customer Service</a><br>
+                    <a href="#">Privacy Policy</a><br>
+                    <a href="#">Contact Us</a><br>
+                    <a href="#">Blog</a><br>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Contact Us</h4>
+                    <span><i class="material-icons" style="font-size: 17px;">location_on</i> Nguyễn Văn Bảo</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">phone</i> 01234567891</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">access_alarm</i> 7 days a week from 9:00 am
+                        to 7:00 pm</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">mail</i> info@demolink.org</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+</body>
+</html>

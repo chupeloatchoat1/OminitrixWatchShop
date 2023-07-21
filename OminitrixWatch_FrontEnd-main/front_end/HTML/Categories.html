@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../CSS/style.css">
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript" src="../JS/login.js"></script>
+    <script type="text/javascript" src="../JS/RegularExpressions.js"></script>
+    <script type="text/javascript" src="../JS/cart.js"></script>
+    <script type="text/javascript" src="../JS/watch.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Categories</title>
+    <script>
+        // window.onscroll = function () { scrollFunction() };
+        window.onload = function(){isCustomer()
+                                    quantityInCart()}
+    </script>
+</head>
+
+<body>
+    <div style="padding: 1%; z-index: 2;">
+        <header>
+            <div class="column">
+                <div class="row">
+                    <div class="col-md-9 col-lg-9"></div>
+                    <div class="col-md-3 col-lg-3">
+                        <div id="loginContainer">
+                            <span>
+                                <a href="ShoppingCart.html" style="color: black;position: relative;"><i
+                                    class="material-icons">shopping_cart</i></a>
+                                    <p id="quantityCart"></p>
+                            </span>
+                            <!-- Guest -->
+                            <div id="guest" style="display: inline;">
+                                <a href="Registration.html">Registration</a> &#124; 
+                                <a href="Login.html">Login</a>
+                            </div>
+
+                            <!-- Customer -->
+                            <div class="dropdown" style="display: none;" id="customer">
+                                <a id="userName" style="display: inline-flex;justify-content: center;"></a>
+                                <div class="dropdown-content">
+                                    <a href="../HTML/MyOrder.html">My Order</a>
+                                    <a href="Admin/TableProduct.html" id="roleAdmin">Admin</a>
+                                    <a href="#" onclick="logOut()">Log Out</a>
+                                </div>
+                                <script>
+                                    if('userid' in sessionStorage){
+                                        userID = JSON.parse(sessionStorage.getItem('userid'))
+                                        document.getElementById('userName').href = 'ProfileUser.html?userId='+userID+''
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="navbar">
+                    <div class="col-md-3 col-lg-3" style="padding-left: 10%;">
+                        <a href="Home.html"><img src="../Img/logo.png" style="width:80%" /></a>
+                    </div>
+                    <div class="col-md-6 col-lg-6">
+                        <div class="flex-container" id="categories">
+                            <script>
+                                axios.get('http://localhost:9000/ominitrix/type')
+                                .then(function(response){
+                                    document.getElementById('categories').innerHTML = response.data.map(function(type){
+                                        return(
+                                            '<a style="font-size: 25px" href="Categories.html?watchType='+type.typeID+'">'+type.typeName+'</a>'
+                                        )
+                                    }).join('')
+                                    document.getElementById('categories_2').innerHTML= response.data.map(function(type){
+                                        return(
+                                            '<li><a href="Categories.html?watchType='+type.typeID+'">'+type.typeName+'</a></li>'
+                                        )
+                                    }).join('')
+                                })
+                            </script>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-3">
+                        <div class="search">
+                            <input type="text" id="searchName" class="form-control">
+                            <button style="border: none;"><i class="material-icons" 
+                                onclick="
+                                            const search = document.getElementById('searchName').value
+                                            if(search){
+                                                location.href='../HTML/Search.html?search='+search+''
+                                            }">search</i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="pathLink">
+                        <a href="Home.html">Home</a> &iota; <a id="rootLink"></a>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <section>
+            <div class="row" style="padding: 1% 5% 0 5%;">
+                <div class="col-md-12 col-lg-12" style="display: flex;">
+                    <p id="title">Categories</p>
+                </div>
+
+                <!-- Filter --> 
+                <div class="col-md-3 col-lg-3">
+                    <ul id="listCategory">
+                        <h4 style="font-weight: bold;margin-bottom: 8%;">Categories</h4>
+                        <div id="categories_2"></div>
+                        
+                    </ul>
+                    <ul id="listCategory">
+                        <h4 style="font-weight: bold;margin-bottom: 8%;">Filter By</h4>
+                        <li>
+                            <p style="font-weight: bold;">Brand</p>
+                            <form>
+                                <div id="chkBrand"></div>
+                                <script>
+                                    axios.get('http://localhost:9000/ominitrix/brand')
+                                    .then(function(response){
+                                        document.getElementById('chkBrand').innerHTML = response.data.map(function(brand){
+                                            return(
+                                                '<input id="'+brand.brandID+'" name="'+brand.brandID+'" type="checkbox" value="'+brand.brandID+'" onclick ="findByBrand(\''+brand.brandID+'\')">'+'&nbsp;'+
+                                                '<label for="'+brand.brandID+'">'+brand.brandName+'</label><br>'
+                                            )
+                                        }).join('')
+                                    })
+                                </script>
+                            </form>
+                        </li>
+                        <li>
+                            <p style="font-weight: bold;">Price</p>
+                            <div style="display: flex; color: lightgrey;margin-bottom: 20px;">
+                                <input type="number" class="priceMin" id="inputPrice" placeholder="Min">
+                                &minus;
+                                <input type="number" class="priceMax" id="inputPrice" placeholder="Max">
+                            </div>
+                            <div style="display: flex; justify-content: space-around;">
+                                <button id="btnAdd2Cart" onclick="sortMaxMin()"> Apply </button>
+                                <button id="btnAdd2Cart" onclick="location.reload()"> Clear </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-8 col-lg-8">
+                    <div class="column">
+                        <div class="row" style="margin-bottom: 4%;">
+                            <div class="col-md-6 col-lg-6">
+                                <label id="sortBy" style="font-size: 15px;font-weight: bold;">Sort by</label>
+                                <select id="sortBy" class="sortByPrice" style="font-size: 15px;" onchange="sortByPrice(this)">
+                                    <option>All</option>
+                                    <option value="-1">Price: Low to Hight</option>
+                                    <option value="1">Price: Hight to Low</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-lg-6" style="position: relative;">
+                                <div  id="pageNumber" style="position: absolute; right: 0px;">
+                                    <a class="active" href="#">1</a>
+                                    <a href="#" id="pageNumber">2</a>
+                                    <a href="#" id="pageNumber">3</a>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        <!-- List Prodcut -->
+                        <div class="row" id="listWatch">
+                            <script>
+                                const params = new URLSearchParams(document.location.search)
+                                const type = params.get('watchType')
+                                axios.all([
+                                    axios.get('http://localhost:9000/ominitrix/watch/find-by-type/'+type),
+                                    axios.get('http://localhost:9000/ominitrix/type/'+type),
+                                ]).then(axios.spread(function(watchs,watchType){
+
+                                    document.getElementById('rootLink').innerText = watchType.data.typeName
+
+                                    document.getElementById('listWatch').innerHTML = watchs.data.map(function(watch){
+                                        if(watch.limitQuantity<=0 || watch.status==false){
+                                            return(
+                                            '<div class="col-md-4 col-lg-4" style="margin-bottom: 20px;">'+
+                                                '<div class="card">'+
+                                                    '<div class="card-header" style="position: relative;">'+
+                                                        '<a href="ProductDetail.html?watchId='+watch.watchID+'">'+
+                                                            '<img src="http://localhost:9000/'+watch.images[0]+'"'+'id="imageCard">'+
+                                                            '<div class="middle">'+
+                                                                '<i class="material-icons" style="color: gray;margin-top: 50%;">remove_red_eye</i>'+
+                                                            '</div>'+
+                                                        '</a>'+
+                                                    '</div>'+
+                                                    '<div class="card-body" style="width: 100%;margin-bottom: -30px;">'+
+                                                        '<a href="ProductDetail.html?watchId='+watch.watchID+'" class="txtLinkName"><p id="nameWatch">'+watch.watchName+'</p></a>'+
+                                                        '<p id="priceWatch">'+watch.price.toLocaleString('en-US', {style : 'currency', currency : 'VND'})+'</p>'+
+                                                    '</div>'+
+                                                    '<div style="margin-bottom: 20px;">'+
+                                                        '<button id="btnAdd2Cart" class="'+watch.watchID+'" onclick="add2Cart(\''+watch.watchID+'\',\''+watch.price+'\')" disabled style="background-color:gray"><i class="material-icons"'+
+                                                            'style="color: white;background-color: gray;margin-right: 10px;">shopping_cart</i>Add to Cart</button>'+
+                                                    '</div>'+
+                                                '</div>'+
+                                           ' </div>')
+                                        }else if(watch.limitQuantity>0){
+                                            return(
+                                            '<div class="col-md-4 col-lg-4" style="margin-bottom: 20px;">'+
+                                                '<div class="card">'+
+                                                    '<div class="card-header" style="position: relative;">'+
+                                                        '<a href="ProductDetail.html?watchId='+watch.watchID+'">'+
+                                                            '<img src="http://localhost:9000/'+watch.images[0]+'"'+'id="imageCard">'+
+                                                            '<div class="middle">'+
+                                                                '<i class="material-icons" style="color: gray;margin-top: 50%;">remove_red_eye</i>'+
+                                                            '</div>'+
+                                                        '</a>'+
+                                                    '</div>'+
+                                                    '<div class="card-body" style="width: 100%;margin-bottom: -30px;">'+
+                                                        '<a href="ProductDetail.html?watchId='+watch.watchID+'" class="txtLinkName"><p id="nameWatch">'+watch.watchName+'</p></a>'+
+                                                        '<p id="priceWatch">'+watch.price.toLocaleString('en-US', {style : 'currency', currency : 'VND'})+'</p>'+
+                                                    '</div>'+
+                                                    '<div style="margin-bottom: 20px;">'+
+                                                        '<button id="btnAdd2Cart" class="'+watch.watchID+'" onclick="add2Cart(\''+watch.watchID+'\',\''+watch.price+'\')"><i class="material-icons"'+
+                                                            'style="color: white;background-color: black;margin-right: 10px;">shopping_cart</i>Add to Cart</button>'+
+                                                    '</div>'+
+                                                '</div>'+
+                                           ' </div>')
+                                        }
+                                        
+                                    }).join('')
+                                })
+                                )
+
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1 col-lg-1"></div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="row">
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Categories</h4>
+                    <a href="Categories.html">Women's</a><br>
+                    <a href="Categories.html">Men's</a><br>
+                    <a href="Categories.html">Collection</a><br>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Information</h4>
+                    <a href="#">About us</a><br>
+                    <a href="#">Customer Service</a><br>
+                    <a href="#">Privacy Policy</a><br>
+                    <a href="#">Contact Us</a><br>
+                    <a href="#">Blog</a><br>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <h4 style="font-weight: bold;">Contact Us</h4>
+                    <span><i class="material-icons" style="font-size: 17px;">location_on</i> Nguyễn Văn Bảo</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">phone</i> 01234567891</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">access_alarm</i> 7 days a week from 9:00 am
+                        to 7:00 pm</span><br>
+                    <span><i class="material-icons" style="font-size: 17px;">mail</i> info@demolink.org</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
